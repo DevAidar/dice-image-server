@@ -1,0 +1,25 @@
+{
+	"extends": ["plugin:node/recommended"],
+	"rules": {
+		"quotes": [
+			2,
+			"single",
+			{ "avoidEscape": true, "allowTemplateLiterals": true }
+		],
+		"semi": ["warn", "always"],
+		"comma-dangle": ["error", "always-multiline"],
+		"indent": ["error", "tab"],
+		"object-curly-spacing": ["error", "always"],
+		"no-console": "warn",
+		"no-unused-vars": "warn",
+		"no-process-exit": "off",
+		"object-shorthand": "off",
+		"spaced-comment": "error",
+		"class-methods-use-this": "off",
+		"no-shadow": "off",
+		"no-nested-ternary": "off",
+		"no-return-assign": "off",
+		"no-loop-func": "off",
+		"no-mixed-operators": "off"
+	}
+}
