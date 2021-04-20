@@ -57,11 +57,11 @@ const create = (req, res) => {
 
 					console.log('currentPath', files.image.path);
 					console.log('newPath', newPath);
-					console.log('files', files);
-					console.log('files.image', files.image);
+					// console.log('files', files);
+					// console.log('files.image', files.image);
           
 					// Moving the image to the correct directory
-					fs.rename(files.image.path, newPath, err => {
+					fs.copyFile(files.image.path, newPath, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message, line: '67' }))
