@@ -54,6 +54,9 @@ const create = (req, res, next) => {
             
 					const currentPath = files.image.path;
 					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
+
+					console.log('currentPath', currentPath);
+					console.log('newPath', newPath);
             
 					// Moving the image to the correct directory
 					fs.rename(currentPath, newPath, err => {
