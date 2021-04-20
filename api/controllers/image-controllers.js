@@ -60,11 +60,10 @@ const create = (req, res, next) => {
             
 					// Moving the image to the correct directory
 					fs.rename(currentPath, newPath, err => {
-						if (err) {
-							Image.findByIdAndDelete(image._id)
+						if (err) 
+							return Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message }))
 								.catch(() => res.status(500).json({ error: err.message }));
-						}
 
 						// Updating corresponding user
 						User.findByIdAndUpdate(req.userId, { $push: {
