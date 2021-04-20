@@ -79,6 +79,8 @@ const create = (req, res, next) => {
 				.catch((err) => res.status(500).json({ error: err.message }));
 		});
 	});
+
+	return res.status(500).send('There was an error in the database');
 };
 
 
