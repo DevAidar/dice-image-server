@@ -62,14 +62,14 @@ const create = (req, res) => {
 					// console.log('files.image', files.image);
           
 					// Moving the image to the correct directory
-					fs.writeFile(newPath, rawData, err => {
+					fs.copyFile(rawData, newPath, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message, line: '67' }))
 								.catch(() => res.status(500).json({ error: err.message, line: '68' }));
 
 						// Updating corresponding user
-						return User.findByIdAndUpdate(req.userId, { $push: {
+						User.findByIdAndUpdate(req.userId, { $push: {
 							images: image._id,
 						} })
 							.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
