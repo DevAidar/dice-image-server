@@ -18,7 +18,7 @@ const deleteImageById = (req, res, next) => {
 	});
 };
 
-const create = (req, res, next) => {
+const create = (req, res) => {
 	const form = new formidable.IncomingForm();
   
 	form.parse(req, (err, _, files) => {
@@ -52,18 +52,20 @@ const create = (req, res, next) => {
       
 					const imageName = `${image._id}.${result.ext.toLowerCase()}`;
             
-					const currentPath = files.image.path;
+					// const currentPath = files.image.path;
 					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
 
-					console.log('currentPath', currentPath);
+					console.log('currentPath', files.image.path);
 					console.log('newPath', newPath);
-            
+					console.log('files', files);
+					console.log('files.image', files.image);
+          
 					// Moving the image to the correct directory
-					fs.rename(currentPath, newPath, err => {
+					fs.rename(files.image.path, newPath, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
-								.then(() => res.status(500).json({ error: err.message }))
-								.catch(() => res.status(500).json({ error: err.message }));
+								.then(() => res.status(500).json({ error: err.message, line: '67' }))
+								.catch(() => res.status(500).json({ error: err.message, line: '68' }));
 
 						// Updating corresponding user
 						User.findByIdAndUpdate(req.userId, { $push: {
@@ -71,11 +73,11 @@ const create = (req, res, next) => {
 						} })
 							.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
 							.catch((err) => Image.findByIdAndDelete(image._id)
-								.then(() => res.status(500).send({ error: err.message }))
-								.catch(() => res.status(500).send({ error: err.message })));
+								.then(() => res.status(500).send({ error: err.message, line: '76' }))
+								.catch(() => res.status(500).send({ error: err.message, line: '77' })));
 					});
 				})
-				.catch((err) => res.status(500).json({ error: err.message }));
+				.catch((err) => res.status(500).json({ error: err.message, line: '80' }));
 		});
 	});
 };
