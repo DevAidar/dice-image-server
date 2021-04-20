@@ -56,35 +56,21 @@ const create = (req, res) => {
 					const rawData = fs.readFileSync(files.image.path);
 					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
 
-					console.log('rawData', rawData);
-					console.log('__dirname', __dirname);
-					console.log('imagePath', files.image.path);
-					console.log('newPath', newPath);
-					// console.log('files', files);
-					// console.log('files.image', files.image);
-          
-					// Moving the image to the correct directory
-					fs.open(newPath, 'w', err => {
+					// Creating image file in uploads folder
+					fs.writeFile(newPath, rawData, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message, line: '67' }))
 								.catch(() => res.status(500).json({ error: err.message, line: '68' }));
-            
-						fs.writeFile(newPath, rawData, err => {
-							if (err) 
-								return Image.findByIdAndDelete(image._id)
-									.then(() => res.status(500).json({ error: err.message, line: '67' }))
-									.catch(() => res.status(500).json({ error: err.message, line: '68' }));
     
-							// Updating corresponding user
-							User.findByIdAndUpdate(req.userId, { $push: {
-								images: image._id,
-							} })
-								.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
-								.catch((err) => Image.findByIdAndDelete(image._id)
-									.then(() => res.status(500).send({ error: err.message, line: '76' }))
-									.catch(() => res.status(500).send({ error: err.message, line: '77' })));
-						});
+						// Updating corresponding user
+						User.findByIdAndUpdate(req.userId, { $push: {
+							images: image._id,
+						} })
+							.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
+							.catch((err) => Image.findByIdAndDelete(image._id)
+								.then(() => res.status(500).send({ error: err.message, line: '76' }))
+								.catch(() => res.status(500).send({ error: err.message, line: '77' })));
 					});
 				})
 				.catch((err) => res.status(500).json({ error: err.message, line: '80' }));

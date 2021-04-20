@@ -19,7 +19,7 @@ const verifyToken = async (req, res, next) => {
     
 		next();
 	} catch (err) {
-		res.status(403).send('Invalid Token.');
+		return res.status(403).send('Invalid Token.');
 	}
 };
 
