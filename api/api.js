@@ -23,9 +23,7 @@ const verifyToken = async (req, res, next) => {
 	}
 };
 
-router.post('/', verifyToken, create, (_, res) => {
-	res.send('Successfully Uploaded an Image');
-});
+router.post('/', verifyToken, create);
 
 router.delete('/', verifyToken, deleteImageById, (_, res) => {
 	res.send('Successfully Deleted an Image');

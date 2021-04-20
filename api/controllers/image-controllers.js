@@ -70,7 +70,7 @@ const create = (req, res, next) => {
 						User.findByIdAndUpdate(req.userId, { $push: {
 							images: image._id,
 						} })
-							.then(() => next())
+							.then(() => res.status(200).json({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
 							.catch((err) => Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message }))
 								.catch(() => res.status(500).json({ error: err.message })));
@@ -79,8 +79,6 @@ const create = (req, res, next) => {
 				.catch((err) => res.status(500).json({ error: err.message }));
 		});
 	});
-
-	return res.status(500).send('There was an error in the database');
 };
 
 
