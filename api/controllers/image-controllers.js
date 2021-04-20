@@ -57,6 +57,7 @@ const create = (req, res) => {
 					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
 
 					console.log('rawData', rawData);
+					console.log('__dirname', __dirname);
 					console.log('imagePath', files.image.path);
 					console.log('newPath', newPath);
 					// console.log('files', files);
