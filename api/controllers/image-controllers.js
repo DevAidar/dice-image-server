@@ -53,6 +53,7 @@ const create = (req, res) => {
 					const imageName = `${image._id}.${result.ext.toLowerCase()}`;
             
 					// const currentPath = files.image.path;
+					const rawData = fs.readFileSync(files.image.path);
 					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
 
 					console.log('currentPath', files.image.path);
@@ -61,14 +62,14 @@ const create = (req, res) => {
 					// console.log('files.image', files.image);
           
 					// Moving the image to the correct directory
-					fs.copyFile(files.image.path, newPath, err => {
+					fs.writeFile(newPath, rawData, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message, line: '67' }))
 								.catch(() => res.status(500).json({ error: err.message, line: '68' }));
 
 						// Updating corresponding user
-						User.findByIdAndUpdate(req.userId, { $push: {
+						return User.findByIdAndUpdate(req.userId, { $push: {
 							images: image._id,
 						} })
 							.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
