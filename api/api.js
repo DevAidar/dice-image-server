@@ -8,7 +8,7 @@ const verifyToken = async (req, res, next) => {
 	const authHeader = req.headers['access-token'];
 	const token = authHeader && authHeader.split(' ')[1];
 
-	if (!token) return res.status(401).send({ message: 'Access Denied' });
+	if (!token) return res.status(500).send({ message: 'Access Denied' });
 
 	try {
 		const verify = jwt.verify(token, process.env.TOKEN_SECRET);
@@ -19,7 +19,7 @@ const verifyToken = async (req, res, next) => {
     
 		next();
 	} catch (err) {
-		return res.status(403).send({ message: 'Invalid Token.' });
+		return res.status(500).send({ message: 'Invalid Token.' });
 	}
 };
 
