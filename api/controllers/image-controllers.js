@@ -56,13 +56,14 @@ const create = (req, res) => {
 					const rawData = fs.readFileSync(files.image.path);
 					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
 
-					console.log('currentPath', files.image.path);
+					console.log('rawData', rawData);
+					console.log('imagePath', files.image.path);
 					console.log('newPath', newPath);
 					// console.log('files', files);
 					// console.log('files.image', files.image);
           
 					// Moving the image to the correct directory
-					fs.copyFile(rawData, newPath, err => {
+					fs.writeFile(newPath, rawData, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
 								.then(() => res.status(500).json({ error: err.message, line: '67' }))
