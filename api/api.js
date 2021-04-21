@@ -31,8 +31,8 @@ const verifyToken = (req, res, next) => {
 		// 	throw 'User does not exist';
     
 		console.log('7');
-		// next();
 	});
+	next();
 };
 
 router.post('/', verifyToken, create);
