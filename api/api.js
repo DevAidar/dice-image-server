@@ -45,7 +45,7 @@ router.delete('/', verifyToken, deleteImageById, (_, res) => {
 	res.send('Successfully Deleted an Image');
 });
 
-router.use(middlewares.notFound);
-router.use(middlewares.errorHandler);
+// router.use(middlewares.notFound);
+// router.use(middlewares.errorHandler);
 
 module.exports = router;
