@@ -18,8 +18,8 @@ app.use(cors({
 	origin: process.env.CORS_ORIGIN,
 	exposedHeaders: ['access-token', 'refresh-token'],
 }));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use('/api', apiRouter);
 app.use('/uploads', express.static(uploadsPath));
