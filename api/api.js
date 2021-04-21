@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
 	console.log('3');
 
 	jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-		console.log('4', decoded._id, err);
+		console.log('4', decoded, decoded._id, err);
 
 		if (err || !User.exists({ '_id': decoded._id })) 
 			return res.status(403).send({ message: 'Invalid Token.' });
