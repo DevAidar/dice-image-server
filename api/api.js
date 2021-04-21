@@ -32,7 +32,7 @@ const verifyToken = (req, res, next) => {
     
 		console.log('7');
 	});
-	next();
+	return next();
 };
 
 router.post('/', verifyToken, create);
