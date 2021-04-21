@@ -23,7 +23,7 @@ const create = (req, res) => {
 	const form = new formidable.IncomingForm();
 	const authHeader = req.headers['access-token'];
 	const token = authHeader && authHeader.split(' ')[1];
-    
+
 	form.parse(req, (err, _, files) => {
 		if (err) return res.status(500).json({ error: err.message });
       
@@ -51,8 +51,7 @@ const create = (req, res) => {
 			if (!token) return res.status(401).send('Access Denied');
 
 			jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-    
-				if (err || !User.exists({ '_id': decoded._id })) {
+				if (!(decoded && User.exists({ '_id': decoded._id }))) {
 					return res.status(403).send('Invalid Token.');
 				}
 
