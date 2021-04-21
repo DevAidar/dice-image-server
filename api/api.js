@@ -21,8 +21,7 @@ const verifyToken = (req, res, next) => {
 		console.log('err', err ? err : 'No Errors');
 		console.log('decoded', decoded ? decoded : 'Nothing to Decode');
 
-		if (err || !User.exists({ '_id': decoded._id })) {
-			console.log('BAD ERROR PLEASE DIE');
+		if (err) {
 			return res.status(403).send('Invalid Token.');
 		}
 
@@ -33,6 +32,9 @@ const verifyToken = (req, res, next) => {
 		// Check if the user exists
 		// if (!User.exists({ '_id': decoded._id }))
 		// 	throw 'User does not exist';
+
+		if (!User.exists({ '_id': decoded._id }))
+			return res.status(403).send('Invalid Token.');
     
 		console.log('7');
 		next();
