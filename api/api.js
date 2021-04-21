@@ -28,7 +28,7 @@ const verifyToken = (req, res, next) => {
     
 		console.log('6');
 		// next();
-		res.status(405).send('You are passing');
+		res.status(200).send('You are passing');
 	} catch (err) {
 		console.log('7');
 		res.status(403).send({ message: 'Invalid Token.' });
