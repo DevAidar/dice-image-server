@@ -19,13 +19,10 @@ const deleteImageById = (req, res, next) => {
 };
 
 const create = (req, res) => {
-	const form = new formidable.IncomingForm();
-  
 	if (!req.userId)
 		return res.status(401).send('Access Denied');
-    
   
-	form.parse(req, (err, _, files) => {
+	req.formidableForm.parse(req, (err, _, files) => {
 		if (err) return res.status(500).json({ error: err.message });
     
 		detect.fromFile(files.image.path, (err, result) => {
