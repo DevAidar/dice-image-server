@@ -19,6 +19,7 @@ const deleteImageById = (req, res, next) => {
 };
 
 const create = (req, res) => {
+	console.log('000');
 	const form = new formidable.IncomingForm();
   
 	form.parse(req, (err, _, files) => {
