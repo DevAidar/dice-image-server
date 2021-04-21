@@ -23,12 +23,11 @@ const verifyToken = (req, res, next) => {
 		console.log('5');
     
 		// Check if the user exists
-		if (!User.exists({ '_id': verify._id }))
-			throw 'User does not exist';
+		// if (!User.exists({ '_id': verify._id }))
+		// 	throw 'User does not exist';
     
 		console.log('6');
-		// next();
-		res.status(200).send('You are passing');
+		next();
 	} catch (err) {
 		console.log('7');
 		res.status(403).send({ message: 'Invalid Token.' });
