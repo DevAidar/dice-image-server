@@ -21,8 +21,10 @@ const verifyToken = (req, res, next) => {
 		console.log('err', err ? err : 'No Errors');
 		console.log('decoded', decoded ? decoded : 'Nothing to Decode');
 
-		if (err || !User.exists({ '_id': decoded._id })) 
+		if (err || !User.exists({ '_id': decoded._id })) {
+			console.log('BAD ERROR PLEASE DIE');
 			return res.status(403).send({ message: 'Invalid Token.' });
+		}
 
 		console.log('5');
 		req.userId = decoded._id;
