@@ -5,8 +5,25 @@ const middlewares = require('../middlewares/middlewares');
 const { create, deleteImageById } = require('./controllers/image-controllers');
 const User = require('./models/user.js');
 
-const verifyToken = async (req, res, next) => {
-	const authHeader = req.headers['access-token'];
+const verifyToken = (req, res, next) => {
+	const authHeader = req.query['access-token'];
+	const token = authHeader && authHeader.split(' ')[1];
+
+	if (!token) return res.status(401).send('Access Denied');
+
+	try {
+		const verify = jwt.verify(token, process.env.TOKEN_SECRET);
+		console.log(verify);
+		req.userId = verify._id;
+		next();
+	} catch (err) {
+		res.status(403).send('Invalid Token.');
+	}
+  
+	/*
+
+	const authHeader = req.query['access-token'];
+	// const authHeader = req.headers['access-token'];
 	console.log('1');
 	const token = authHeader && authHeader.split(' ')[1];
 	console.log('2');
@@ -39,6 +56,8 @@ const verifyToken = async (req, res, next) => {
 		console.log('7');
 		next();
 	});
+
+  /* */
 };
 
 router.post('/', verifyToken, create);
@@ -47,7 +66,7 @@ router.delete('/', verifyToken, deleteImageById, (_, res) => {
 	res.send('Successfully Deleted an Image');
 });
 
-// router.use(middlewares.notFound);
-// router.use(middlewares.errorHandler);
+router.use(middlewares.notFound);
+router.use(middlewares.errorHandler);
 
 module.exports = router;
