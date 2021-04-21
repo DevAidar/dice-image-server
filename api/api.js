@@ -16,22 +16,23 @@ const verifyToken = (req, res, next) => {
 	if (!token) return res.status(401).send('Access Denied');
 	console.log('3');
 
-	try {
-		const verify = jwt.verify(token, process.env.TOKEN_SECRET);
+	jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
 		console.log('4');
-		req.userId = verify._id;
+
+		if (err || !User.exists({ '_id': decoded._id })) 
+			res.status(403).send({ message: 'Invalid Token.' });
+
 		console.log('5');
+		req.userId = verify._id;
+		console.log('6');
     
 		// Check if the user exists
-		// if (!User.exists({ '_id': verify._id }))
+		// if (!User.exists({ '_id': decoded._id }))
 		// 	throw 'User does not exist';
     
-		console.log('6');
-		next();
-	} catch (err) {
 		console.log('7');
-		res.status(403).send({ message: 'Invalid Token.' });
-	}
+		next();
+	});
 };
 
 router.post('/', verifyToken, create);
