@@ -1,3 +1,4 @@
+const formidable = require('formidable');
 const detect = require('detect-file-type');
 const fs = require('fs');
 const path = require('path');
@@ -18,62 +19,74 @@ const deleteImageById = (req, res, next) => {
 };
 
 const create = (req, res) => {
-	if (!req.userId)
-		return res.status(401).send('Access Denied');
+	const form = new formidable.IncomingForm();
+	const authHeader = req.headers['access-token'];
+	const token = authHeader && authHeader.split(' ')[1];
   
-	req.formidableForm.parse(req, (err, _, files) => {
-		if (err) return res.status(500).json({ error: err.message });
-    
-		detect.fromFile(files.image.path, (err, result) => {
-			if (err) return res.status(500).json({ error: err.message });
-            
-			// Allowed ext
-			const filetypes = /jpeg|jpg|png/;
-        
-			// Check ext
-			const extname = filetypes.test(result.ext.toLowerCase());
-        
-			// Check mime
-			const mimetype = filetypes.test(result.mime);
-        
-			if (!mimetype || !extname) {
-				return res.status(500).json({ error: 'Incorrect file type' });
-			}
-        
-			// Check File Size
-			if (files.image.size > 1048576) {
-				return res.status(500).json({ error: 'Image is too large' });
-			}
-      
-			Image.create({
-				user: req.userId,
-			})
-				.then((image) => {
-      
-					const imageName = `${image._id}.${result.ext.toLowerCase()}`;
-            
-					// const currentPath = files.image.path;
-					const rawData = fs.readFileSync(files.image.path);
-					const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
+	if (!token) return res.status(401).send('Access Denied');
 
-					// Creating image file in uploads folder
-					fs.writeFile(newPath, rawData, err => {
-						if (err) 
-							return Image.findByIdAndDelete(image._id)
-								.then(() => res.status(500).json({ error: err.message }))
-								.catch(() => res.status(500).json({ error: err.message }));
+	jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
     
-						// Updating corresponding user
-						User.findByIdAndUpdate(req.userId, { $push: {
-							images: image._id,
-						} })
-							.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
-							.catch((err) => Image.findByIdAndDelete(image._id)
-								.then(() => res.status(500).send({ error: err.message }))
-								.catch(() => res.status(500).send({ error: err.message })));
-					});
+		if (!(decoded && User.exists({ '_id': decoded._id }))) {
+			return res.status(403).send('Invalid Token.');
+		}
+
+		req.userId = decoded._id;
+    
+		form.parse(req, (err, _, files) => {
+			if (err) return res.status(500).json({ error: err.message });
+      
+			detect.fromFile(files.image.path, (err, result) => {
+				if (err) return res.status(500).json({ error: err.message });
+              
+				// Allowed ext
+				const filetypes = /jpeg|jpg|png/;
+          
+				// Check ext
+				const extname = filetypes.test(result.ext.toLowerCase());
+          
+				// Check mime
+				const mimetype = filetypes.test(result.mime);
+          
+				if (!mimetype || !extname) {
+					return res.status(500).json({ error: 'Incorrect file type' });
+				}
+          
+				// Check File Size
+				if (files.image.size > 1048576) {
+					return res.status(500).json({ error: 'Image is too large' });
+				}
+        
+				Image.create({
+					user: req.userId,
 				})
-				.catch((err) => res.status(500).json({ error: err.message }));
+					.then((image) => {
+        
+						const imageName = `${image._id}.${result.ext.toLowerCase()}`;
+              
+						// const currentPath = files.image.path;
+						const rawData = fs.readFileSync(files.image.path);
+						const newPath = path.join(__dirname, '..', '..', 'uploads', imageName);
+  
+						// Creating image file in uploads folder
+						fs.writeFile(newPath, rawData, err => {
+							if (err) 
+								return Image.findByIdAndDelete(image._id)
+									.then(() => res.status(500).json({ error: err.message }))
+									.catch(() => res.status(500).json({ error: err.message }));
+      
+							// Updating corresponding user
+							User.findByIdAndUpdate(req.userId, { $push: {
+								images: image._id,
+							} })
+								.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
+								.catch((err) => Image.findByIdAndDelete(image._id)
+									.then(() => res.status(500).send({ error: err.message }))
+									.catch(() => res.status(500).send({ error: err.message })));
+						});
+					})
+					.catch((err) => res.status(500).json({ error: err.message }));
+			});
 		});
 	});
 };
