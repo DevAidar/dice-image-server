@@ -19,7 +19,6 @@ const deleteImageById = (req, res, next) => {
 };
 
 const create = (req, res) => {
-	console.log('000');
 	const form = new formidable.IncomingForm();
   
 	form.parse(req, (err, _, files) => {
@@ -61,8 +60,8 @@ const create = (req, res) => {
 					fs.writeFile(newPath, rawData, err => {
 						if (err) 
 							return Image.findByIdAndDelete(image._id)
-								.then(() => res.status(500).json({ error: err.message, line: '67' }))
-								.catch(() => res.status(500).json({ error: err.message, line: '68' }));
+								.then(() => res.status(500).json({ error: err.message }))
+								.catch(() => res.status(500).json({ error: err.message }));
     
 						// Updating corresponding user
 						User.findByIdAndUpdate(req.userId, { $push: {
@@ -70,11 +69,11 @@ const create = (req, res) => {
 						} })
 							.then(() => res.status(200).send({ imageId: image._id, userId: req.userId, url: `uploads/${imageName}` }))
 							.catch((err) => Image.findByIdAndDelete(image._id)
-								.then(() => res.status(500).send({ error: err.message, line: '76' }))
-								.catch(() => res.status(500).send({ error: err.message, line: '77' })));
+								.then(() => res.status(500).send({ error: err.message }))
+								.catch(() => res.status(500).send({ error: err.message })));
 					});
 				})
-				.catch((err) => res.status(500).json({ error: err.message, line: '80' }));
+				.catch((err) => res.status(500).json({ error: err.message }));
 		});
 	});
 };
