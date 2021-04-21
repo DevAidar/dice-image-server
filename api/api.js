@@ -23,7 +23,7 @@ const verifyToken = (req, res, next) => {
 			return res.status(403).send({ message: 'Invalid Token.' });
 
 		console.log('5');
-		req.userId = decoded._id;
+		// req.userId = decoded._id;
 		console.log('6');
     
 		// Check if the user exists
