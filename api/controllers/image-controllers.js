@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const formidable = require('formidable');
 const detect = require('detect-file-type');
 const fs = require('fs');
@@ -23,39 +24,41 @@ const create = (req, res) => {
 	const authHeader = req.headers['access-token'];
 	const token = authHeader && authHeader.split(' ')[1];
   
-	if (!token) return res.status(401).send('Access Denied');
-
-	jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+	
     
-		if (!(decoded && User.exists({ '_id': decoded._id }))) {
-			return res.status(403).send('Invalid Token.');
-		}
-
-		req.userId = decoded._id;
-    
-		form.parse(req, (err, _, files) => {
-			if (err) return res.status(500).json({ error: err.message });
+	form.parse(req, (err, _, files) => {
+		if (err) return res.status(500).json({ error: err.message });
       
-			detect.fromFile(files.image.path, (err, result) => {
-				if (err) return res.status(500).json({ error: err.message });
+		detect.fromFile(files.image.path, (err, result) => {
+			if (err) return res.status(500).json({ error: err.message });
               
-				// Allowed ext
-				const filetypes = /jpeg|jpg|png/;
+			// Allowed ext
+			const filetypes = /jpeg|jpg|png/;
           
-				// Check ext
-				const extname = filetypes.test(result.ext.toLowerCase());
+			// Check ext
+			const extname = filetypes.test(result.ext.toLowerCase());
           
-				// Check mime
-				const mimetype = filetypes.test(result.mime);
+			// Check mime
+			const mimetype = filetypes.test(result.mime);
           
-				if (!mimetype || !extname) {
-					return res.status(500).json({ error: 'Incorrect file type' });
+			if (!mimetype || !extname) {
+				return res.status(500).json({ error: 'Incorrect file type' });
+			}
+          
+			// Check File Size
+			if (files.image.size > 1048576) {
+				return res.status(500).json({ error: 'Image is too large' });
+			}
+
+			if (!token) return res.status(401).send('Access Denied');
+
+			jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    
+				if (!(decoded && User.exists({ '_id': decoded._id }))) {
+					return res.status(403).send('Invalid Token.');
 				}
-          
-				// Check File Size
-				if (files.image.size > 1048576) {
-					return res.status(500).json({ error: 'Image is too large' });
-				}
+
+				req.userId = decoded._id;
         
 				Image.create({
 					user: req.userId,
