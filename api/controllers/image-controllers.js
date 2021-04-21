@@ -1,4 +1,3 @@
-const formidable = require('formidable');
 const detect = require('detect-file-type');
 const fs = require('fs');
 const path = require('path');
