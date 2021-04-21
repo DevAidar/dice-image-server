@@ -12,7 +12,8 @@ const verifyToken = (req, res, next) => {
 	console.log('2');
 
 	console.log(token);
-
+	console.log('headers', req.headers);
+  
 	if (!token) return res.status(401).send('Access Denied');
 	console.log('3');
 
