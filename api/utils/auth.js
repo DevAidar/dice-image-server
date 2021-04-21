@@ -11,10 +11,12 @@ const verifyToken = (req, res, next) => {
 		const verify = jwt.verify(token, process.env.TOKEN_SECRET);
 		console.log(verify);
 		req.userId = verify._id;
-		next();
+		// next();
 	} catch (err) {
 		res.status(403).send('Invalid Token.');
 	}
+
+	next();
 };
 
 module.exports = { verifyToken };
