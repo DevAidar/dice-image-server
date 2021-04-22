@@ -12,10 +12,23 @@ const deleteImageById = (req, res, next) => {
   
 	fs.unlink(pictureDirectory, (err) => {
 		if (err) return res.status(500).send('Unable to delete image.');
-  
-		Image.findByIdAndDelete(req.body['picture-id'])
-			.then(() => next())
-			.catch(() => res.status(500).send('There was an error deleting an image.'));
+    
+		User.findById(req.userId, (userError, user) => {
+			if (userError) return res.status(500).send('Unable to find user');
+
+			console.log({
+				images: user.images.filter((imageId) => !imageId.equals(req.body['picture-id'])),
+			});
+
+			User.findByIdAndUpdate(req.userId, 
+				{
+					images: user.images.filter((imageId) => !imageId.equals(req.body['picture-id'])),
+				}, () => {
+					Image.findByIdAndDelete(req.body['picture-id'])
+						.then(() => next())
+						.catch(() => res.status(500).send('1There was an error deleting an image.'));
+				});
+		});
 	});
 };
 

@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const apiRouter = require('./api/api');
+const middlewares = require('./middlewares/middlewares');
 
 require('dotenv').config();
 require('./config/db');
@@ -23,6 +24,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/api', apiRouter);
 app.use('/uploads', express.static(uploadsPath));
+
+app.use(middlewares.notFound);
+app.use(middlewares.errorHandler);
 
 app.listen(port, () => {
 	// eslint-disable-next-line no-console
