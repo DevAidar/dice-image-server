@@ -39,6 +39,8 @@ const create = (req, res) => {
 
 	form.parse(req, (err, _, files) => {
 		if (err) return res.status(500).json({ error: err.message });
+
+		if (!files.image) return res.status(401).send('"image" field was not provided');
       
 		detect.fromFile(files.image.path, (err, result) => {
 			if (err) return res.status(500).json({ error: err.message });
